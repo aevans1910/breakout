@@ -25,6 +25,9 @@ const brickHeight = 20;
 const brickPadding = 10;
 const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
+const colorOne = '#660066';
+const colorTwo = '#be29ec';
+const colorThree = '#efbbff';
 
 // Score variable
 let score = 0;
@@ -36,7 +39,7 @@ const bricks = [];
 for (let c = 0; c < brickColumnCount; c += 1) {
   bricks[c] = [];
   for (let r = 0; r < brickRowCount; r += 1) {
-    bricks[c][r] = { x: 0, y: 0, status: 1 };
+    bricks[c][r] = { x: 0, y: 0, status: r += 1 };
   }
 }
 
@@ -75,7 +78,8 @@ function collisionDetection() {
       if (b.status === 1) {
         if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
           dy = -dy;
-          b.status = 0;
+          b.status -= 1;
+        } if (b.status < 1) {
           score += 1;
           if (score === brickColumnCount * brickRowCount) {
             alert('YOU WIN, CONGRATULATIONS!');
@@ -118,14 +122,34 @@ function drawPaddle() {
 function drawBricks() {
   for (let c = 0; c < brickColumnCount; c += 1) {
     for (let r = 0; r < brickRowCount; r += 1) {
-      if (bricks[c][r].status === 1) {
+      const brickCR = bricks[c][r];
+      if (brickCR.status === 1) {
         const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
         const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-        bricks[c][r].x = brickX;
-        bricks[c][r].y = brickY;
+        brickCR.x = brickX;
+        brickCR.y = brickY;
         ctx.beginPath();
         ctx.rect(brickX, brickY, brickWidth, brickHeight);
-        ctx.fillStyle = '#0095DD';
+
+        if (brickCR.status === 1) {
+          ctx.fillStyle = colorThree;
+        } else if (brickCR.status === 2) {
+          ctx.fillStyle = colorTwo;
+        } else if (brickCR.status === 3) {
+          ctx.fillStyle = colorOne;
+        }
+
+        // switch(brickCR.status) {
+        //     case 1:
+        //     // color A
+        //     break
+        //     case 2:
+        //     // color B
+        //     break
+
+        //     default:
+        // }
+
         ctx.fill();
         ctx.closePath();
       }
