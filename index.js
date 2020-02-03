@@ -40,7 +40,7 @@ class Bricks {
       }
     }
   }
-  draw(ctx) {
+  render(ctx) {
     for (let c = 0; c < this.brickColumnCount; c += 1) {
       for (let r = 0; r < this.brickRowCount; r += 1) {
         if (this.bricksArray[c][r].status >= 1) {
@@ -67,12 +67,12 @@ class Bricks {
 }
 
 class Ball {
-  constructor(radius, color = '#0095DD') {
+  constructor(x, y, radius, color = '#0095DD') {
     this.radius = radius;
     this.color = color;
-    this.x = 0;
+    this.x = x;
     this.dx = 2;
-    this.y = 0;
+    this.y = y;
     this.dy = -2;
   }
   move() {
@@ -90,26 +90,54 @@ class Ball {
 
 
 class Paddle {
-  constructor(x, y, color = '#0095DD') {
-    this.x = x;
-    this.y = y;
-    this.color = color;
-    this.width = 75;
-    this.height = 10;
+  constructor(width = 75, height = 10) {
+    this.paddleWidth = width;
+    this.paddleHeight = height;
+    this.paddleX = (canvas.width - this.paddleWidth) / 2;
   }
   render(ctx) {
     ctx.beginPath();
-    ctx.rect(this.x, this.y, this.width, this.height);
+    ctx.rect(this.paddleX, canvas.height - this.paddleHeight, this.paddleWidth, this.paddleHeight);
     ctx.fillStyle = this.color;
     ctx.fill();
     ctx.closePath();
   }
 }
 
-const p = new Paddle()
-p.x = (canvas.width - paddleWidth) / 2
+class Game {
+  constructor(ballRadius, brickRowCount = 3, brickColumnCount = 6, ballColor = '#0095DD', paddleWidth = 75, paddleHeight = 10) {
+    this.lives = 3;
+    this.score = 0;
+    this.gameRunning = false;
+    this.bricks = new Bricks(brickRowCount, brickColumnCount);
+    this.ball = new Ball(canvas.width / 2, canvas.height - paddleHeight - 10, ballRadius, ballColor);
+    this.paddle = new Paddle(paddleWidth, paddleHeight);
+  }
 
+  renderScore(ctx) {
+    ctx.font = '16px Arial';
+    ctx.fillStyle = '#0095DD';
+    ctx.fillText = (`Score: ${this.score}`, 8, 20)
+  }
 
+  renderLives(ctx) {
+    ctx.font = '16px Arial';
+    ctx.fillStyle = '#0095DD';
+    ctx.fillText(`Lives: ${this.lives}`, canvas.width - 65, 20);
+  }
+
+  renderGame(ctx) {
+    this.bricks.render(ctx);
+    this.paddle.render(ctx);
+    this.ball.render(ctx);
+    this.renderScore(ctx);
+    this.renderLives(ctx);
+  }
+
+   
+}
+
+// Original code
 class Score {
   constructor(color = '#0095DD', font = '16px Arial') {
     this.x = 8;
