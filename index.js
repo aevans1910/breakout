@@ -145,7 +145,7 @@ class Score extends Sprite {
 
 class Game {
   constructor(ballRadius, brickRowCount = 3, brickColumnCount = 6, ballColor = '#0095DD',
-   paddleWidth = 75, paddleHeight = 10) {
+    paddleWidth = 75, paddleHeight = 10) {
 
     this.canvas = document.getElementById('canvas')
     this.ctx = this.canvas.getContext('2d');
@@ -156,7 +156,35 @@ class Game {
     this.paddle = new Paddle(paddleWidth, paddleHeight);
     this.lives = new Lives(canvas.width - 65, 20)
     this.Score = new Score(8, 20)
+
+    this.setupKeyEvents()
   }
+
+  setupKeyEvents() {
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Right' || e.key === 'ArrowRight') {
+        rightPressed = true;
+      } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+        leftPressed = true;
+      }
+    })
+
+    document.addEventListener('keyup', (e) => {
+      if (e.key === 'Right' || e.key === 'ArrowRight') {
+        rightPressed = false;
+      } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+        leftPressed = false;
+      }
+    })
+
+    document.mouseMoveHandler('mousemove', (e) => {
+      const relativeX = e.clientX - canvas.offsetLeft;
+      if (relativeX > 0 && relativeX < canvas.width) {
+        paddle.x = relativeX - paddle.width / 2;
+      }
+    })
+  }
+
 
   renderGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -168,10 +196,10 @@ class Game {
     this.lives.render(this.ctx);
     this.score.render(this.ctx);
 
-    if (rightPressed && paddle.x < canvas.width - this.paddle.width) {
-      paddle.x += 7;
-    } else if (leftPressed && this.paddle.x > 0) {
-      this.paddle.x -= 7;
+    if (rightPressed && this.paddleX < canvas.width - this.paddleWidth) {
+      this.paddleX += 7;
+    } else if (leftPressed && this.paddleX > 0) {
+      this.paddleX -= 7;
     }
 
     requestAnimationFrame(() => {
@@ -179,39 +207,11 @@ class Game {
     })
   }
 
-   moveBallAndPaddle(ctx) {
-    
-    
 
-    // if ()
-  }
 }
 
 // Original code
 
-
-function mouseMoveHandler(e) {
-  const relativeX = e.clientX - canvas.offsetLeft;
-  if (relativeX > 0 && relativeX < canvas.width) {
-    paddle.x = relativeX - paddle.width / 2;
-  }
-}
-
-function keyDownHandler(e) {
-  if (e.key === 'Right' || e.key === 'ArrowRight') {
-    rightPressed = true;
-  } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
-    leftPressed = true;
-  }
-}
-
-function keyUpHandler(e) {
-  if (e.key === 'Right' || e.key === 'ArrowRight') {
-    rightPressed = false;
-  } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
-    leftPressed = false;
-  }
-}
 
 // Event handlers
 document.addEventListener('keydown', keyDownHandler, false);
