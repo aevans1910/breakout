@@ -3,6 +3,13 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
+class Sprite {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y
+  }
+}
+
 class Background {
   constructor(color = 'white') {
     this.color = color
@@ -66,13 +73,12 @@ class Bricks {
   }
 }
 
-class Ball {
+class Ball extends Sprite {
   constructor(x, y, radius, color = '#0095DD') {
+    super(x, y)
     this.radius = radius;
     this.color = color;
-    this.x = x;
     this.dx = 2;
-    this.y = y;
     this.dy = -2;
   }
   move() {
@@ -104,47 +110,64 @@ class Paddle {
   }
 }
 
+class Lives extends Sprite {
+  constructor(x, y) {
+    super(x, y)
+    this.font = '16px Arial';
+    this.fillStyle = '#0095DD';
+    ctx.fillText(`Lives: ${this.lives}`, this.x, this.y);
+  }
+}
+
+class Score extends Sprite {
+  constructor(x, y) {
+    super(x, y)
+    this.font = '16px Arial';
+    this.fillStyle = '#0095DD';
+    this.fillText = (`Score: ${this.score}`, this.x, this.y);
+  }
+}
+
 class Game {
   constructor(ballRadius, brickRowCount = 3, brickColumnCount = 6, ballColor = '#0095DD', paddleWidth = 75, paddleHeight = 10) {
     this.lives = 3;
     this.score = 0;
+
+    this.canvas = document.getElementById('canvas')
+    this.ctx = this.canvas.getContext('2d');
+
     this.gameRunning = false;
     this.bricks = new Bricks(brickRowCount, brickColumnCount);
     this.ball = new Ball(canvas.width / 2, canvas.height - paddleHeight - 10, ballRadius, ballColor);
     this.paddle = new Paddle(paddleWidth, paddleHeight);
   }
 
-  renderScore(ctx) {
-    ctx.font = '16px Arial';
-    ctx.fillStyle = '#0095DD';
-    ctx.fillText = (`Score: ${this.score}`, 8, 20)
-  }
+  renderGame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  renderLives(ctx) {
-    ctx.font = '16px Arial';
-    ctx.fillStyle = '#0095DD';
-    ctx.fillText(`Lives: ${this.lives}`, canvas.width - 65, 20);
-  }
-
-  renderGame(ctx) {
-    this.bricks.render(ctx);
+    this.bricks.render(this.ctx);
     this.paddle.render(ctx);
+    this.ball.move()
     this.ball.render(ctx);
     this.renderScore(ctx);
     this.renderLives(ctx);
+
+    if (rightPressed && paddle.x < canvas.width - this.paddle.width) {
+      paddle.x += 7;
+    } else if (leftPressed && this.paddle.x > 0) {
+      this.paddle.x -= 7;
+    }
+
+    requestAnimationFrame(() => {
+      this.renderGame(ctx);
+    })
   }
 
    moveBallAndPaddle(ctx) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    this.renderGame(ctx);
-    if (rightPressed && paddle.x < canvas.width - paddle.width) {
-      paddle.x += 7;
-    } else if (leftPressed && paddle.x > 0) {
-      paddle.x -= 7;
-    }
-    this.ball.render(ctx);
+    
+    
 
-    if ()
+    // if ()
   }
 }
 
