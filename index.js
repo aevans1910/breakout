@@ -115,7 +115,14 @@ class Lives extends Sprite {
     super(x, y)
     this.font = '16px Arial';
     this.fillStyle = '#0095DD';
+  }
+  render(ctx) {
+    ctx.beginPath();
+    ctx.font = this.font;
+    ctx.fillStyle = this.color;
     ctx.fillText(`Lives: ${this.lives}`, this.x, this.y);
+    ctx.fill();
+    ctx.closePath();
   }
 }
 
@@ -126,12 +133,19 @@ class Score extends Sprite {
     this.fillStyle = '#0095DD';
     this.fillText = (`Score: ${this.score}`, this.x, this.y);
   }
+  render(ctx) {
+    ctx.beginPath();
+    ctx.font = this.font;
+    ctx.fillStyle = this.color;
+    ctx.fillText(`Lives: ${this.lives}`, this.x, this.y);
+    ctx.fill();
+    ctx.closePath();
+  }
 }
 
 class Game {
-  constructor(ballRadius, brickRowCount = 3, brickColumnCount = 6, ballColor = '#0095DD', paddleWidth = 75, paddleHeight = 10) {
-    this.lives = 3;
-    this.score = 0;
+  constructor(ballRadius, brickRowCount = 3, brickColumnCount = 6, ballColor = '#0095DD',
+   paddleWidth = 75, paddleHeight = 10) {
 
     this.canvas = document.getElementById('canvas')
     this.ctx = this.canvas.getContext('2d');
@@ -140,17 +154,19 @@ class Game {
     this.bricks = new Bricks(brickRowCount, brickColumnCount);
     this.ball = new Ball(canvas.width / 2, canvas.height - paddleHeight - 10, ballRadius, ballColor);
     this.paddle = new Paddle(paddleWidth, paddleHeight);
+    this.lives = new Lives(canvas.width - 65, 20)
+    this.Score = new Score(8, 20)
   }
 
   renderGame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     this.bricks.render(this.ctx);
-    this.paddle.render(ctx);
+    this.paddle.render(this.ctx);
     this.ball.move()
-    this.ball.render(ctx);
-    this.renderScore(ctx);
-    this.renderLives(ctx);
+    this.ball.render(this.ctx);
+    this.lives.render(this.ctx);
+    this.score.render(this.ctx);
 
     if (rightPressed && paddle.x < canvas.width - this.paddle.width) {
       paddle.x += 7;
