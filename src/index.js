@@ -185,17 +185,17 @@ class Game {
   }
 
   collisionDetection() {
-    for (let c = 0; c < this.brickColumnCount; c += 1) {
-      for (let r = 0; r < this.brickRowCount; r += 1) {
-        const b = this.bricksArray[c][r];
+    for (let c = 0; c < this.bricks.brickColumnCount; c += 1) {
+      for (let r = 0; r < this.bricks.brickRowCount; r += 1) {
+        const b = this.bricks.bricksArray[c][r];
         if (b.status >= 1) {
-          if (this.ball.x > this.brick.x && this.ball.x < this.brick.x + this.brick.brickWidth
-            && this.ball.y > this.brick.y && this.ball.y < this.brick.y + this.brick.brickHeight) {
+          if (this.ball.x > this.bricks.x && this.ball.x < this.bricks.x + this.bricks.brickWidth
+            && this.ball.y > this.bricks.y && this.ball.y < this.bricks.y + this.bricks.brickHeight) {
             this.ball.dy = -this.ball.dy;
-            this.brick.status -= 1;
-          } if (this.brick.status < 1) {
+            this.bricks.status -= 1;
+          } if (this.bricks.status < 1) {
             this.score += 1;
-            if (this.score === this.brickColumnCount * this.brickRowCount) {
+            if (this.score === this.bricks.brickColumnCount * this.bricks.brickRowCount) {
               alert('YOU WIN, CONGRATULATIONS!');
               document.location.reload();
             }
@@ -213,6 +213,7 @@ class Game {
     this.ball.move();
 
     this.collisionDetection(); // FIXME 
+
     if (this.ball.y + this.ball.dy < this.ball.radius) {
       this.ball.dy = -this.ball.dy;
     } else if (this.ball.y + this.ball.dy > this.canvas.height - this.ball.radius) {
