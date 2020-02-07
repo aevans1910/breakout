@@ -107,6 +107,7 @@ class Paddle extends Sprite {
 class Lives extends Sprite {
   constructor(x, y) {
     super(x, y);
+    this.numLives = 3;
     this.font = '16px Arial';
     this.fillStyle = '#0095DD';
   }
@@ -115,7 +116,7 @@ class Lives extends Sprite {
     ctx.beginPath();
     ctx.font = this.font;
     ctx.fillStyle = this.color;
-    ctx.fillText(`Lives: ${this.lives}`, this.x, this.y);
+    ctx.fillText(`Lives: ${this.numLives}`, this.x, this.y);
     ctx.fill();
     ctx.closePath();
   }
@@ -124,16 +125,17 @@ class Lives extends Sprite {
 class Score extends Sprite {
   constructor(x, y) {
     super(x, y);
+    this.numScore = 0;
     this.font = '16px Arial';
     this.fillStyle = '#0095DD';
-    this.fillText = (`Score: ${this.score}`, this.x, this.y);
+    // this.fillText = (`Score: ${this.numScore}`, this.x, this.y);
   }
 
   render(ctx) {
     ctx.beginPath();
     ctx.font = this.font;
     ctx.fillStyle = this.color;
-    ctx.fillText(`Score: ${this.score}`, this.x, this.y);
+    ctx.fillText(`Score: ${this.numScore}`, this.x, this.y);
     ctx.fill();
     ctx.closePath();
   }
@@ -155,7 +157,7 @@ class Game {
 
     this.setupKeyEvents();
 
-    // start the game 
+    // start the game
     this.renderGame();
   }
 
@@ -189,13 +191,14 @@ class Game {
       for (let r = 0; r < this.bricks.brickRowCount; r += 1) {
         const b = this.bricks.bricksArray[c][r];
         if (b.status >= 1) {
-          if (this.ball.x > this.bricks.x && this.ball.x < this.bricks.x + this.bricks.brickWidth
-            && this.ball.y > this.bricks.y && this.ball.y < this.bricks.y + this.bricks.brickHeight) {
+          if (this.ball.y > b.y && this.ball.y < b.y + this.bricks.brickHeight && this.ball.x > b.x
+            && this.ball.x < b.x + this.bricks.brickWidth) {
             this.ball.dy = -this.ball.dy;
-            this.bricks.status -= 1;
-          } if (this.bricks.status < 1) {
-            this.score += 1;
-            if (this.score === this.bricks.brickColumnCount * this.bricks.brickRowCount) {
+            b.status -= 1;
+            // console.log
+          } if (b.status < 1) {
+            this.score.numScore += 1;
+            if (this.score.numScore === this.bricks.brickColumnCount * this.bricks.brickRowCount) {
               alert('YOU WIN, CONGRATULATIONS!');
               document.location.reload();
             }
@@ -212,7 +215,7 @@ class Game {
 
     this.ball.move();
 
-    this.collisionDetection(); // FIXME 
+    this.collisionDetection(); // FIXME
 
     if (this.ball.y + this.ball.dy < this.ball.radius) {
       this.ball.dy = -this.ball.dy;
@@ -220,8 +223,8 @@ class Game {
       if (this.ball.x > this.paddle.x && this.ball.x < this.paddle.x + this.paddle.paddleWidth) {
         this.ball.dy = -this.ball.dy;
       } else {
-        this.lives -= 1;
-        if (!this.lives) {
+        this.lives.numLives -= 1;
+        if (!this.lives.numLives) {
           alert('GAME OVER');
           document.location.reload();
         } else {
@@ -247,8 +250,8 @@ class Game {
 
     this.bricks.render(this.ctx); // *
     this.paddle.render(this.ctx); // *
-    this.ball.render(this.ctx);   // *
-    this.lives.render(this.ctx);
+    this.ball.render(this.ctx); // *
+    this.lives.render(this.ctx); // *
     this.score.render(this.ctx);
 
     requestAnimationFrame(() => {
@@ -260,5 +263,3 @@ class Game {
 
 // eslint-disable-next-line no-new
 const game = new Game();
-
-console.log(game);
